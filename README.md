@@ -10,7 +10,7 @@
 ## Terminology
 * `base token` refers to the asset that is the `price` of a symbol.
 * `quote token` refers to the asset that is the `quantity` of a symbol.
-* `wei` the smallest unit of measurement in Ethereum. `1 ETH` = `1 000 000 000 000 000 000 WEI` (18 zeros)
+* `wei` is the smallest unit of measurement in Ethereum. `1 ETH` = `1 000 000 000 000 000 000 WEI` (18 zeros)
 * `contract_address` refers to the exchange contract address, currently: `0xa5CC679A3528956E8032df4F03756C077C1eE3F4`
 
 # CALCULATING BUY AND SELL AMOUNTS
