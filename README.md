@@ -45,31 +45,31 @@ getAmountBuyAndSell(side, price, quantity, quoteTokenDecimals, baseTokenDecimals
 Some API endpoints require the signing of a hash in order to prove the ownership of the account. For different operations the structure of the hash differs, please refer to the respective endpoints. After you have produced the hash, use the following function to sign:
 
 ```javascript
-	const ethUtil = require('ethereumjs-util');
-	sign(hash) {
-		try 
-		{
-			const privateKeyBuf = Buffer.from(<private key>, 'hex'),
-				hashBuf = ethUtil.toBuffer(hash),
-				prefixedHashBuf = ethUtil.hashPersonalMessage(hashBuf);
+const ethUtil = require('ethereumjs-util');
+sign(hash) {
+	try 
+	{
+		const privateKeyBuf = Buffer.from(<private key>, 'hex'),
+			hashBuf = ethUtil.toBuffer(hash),
+			prefixedHashBuf = ethUtil.hashPersonalMessage(hashBuf);
 
-			const sign = ethUtil.ecsign(prefixedHashBuf, privateKeyBuf);
+		const sign = ethUtil.ecsign(prefixedHashBuf, privateKeyBuf);
 
-			return {
-				v: sign.v,
-				r: ethUtil.bufferToHex(sign.r),
-				s: ethUtil.bufferToHex(sign.s)
-			};
-		}
-		catch (error)
-		{
-			console.error(`Error signing hash: ${error.message}`);
-		}
-		
+		return {
+			v: sign.v,
+			r: ethUtil.bufferToHex(sign.r),
+			s: ethUtil.bufferToHex(sign.s)
+		};
 	}
-	
-	var signed = sign(...);
-	console.log(signed.v, signed.r, signed.s);
+	catch (error)
+	{
+		console.error(`Error signing hash: ${error.message}`);
+	}
+
+}
+
+var signed = sign(...);
+console.log(signed.v, signed.r, signed.s);
 ```
 * Replace <private key> with your wallet private key
 
@@ -127,15 +127,13 @@ limit | INT | NO | Default 100; max 10000
     [
       "0.000000450",     // PRICE
       "431000.00000000"   // QTY
-    ],
-    ...
+    ]
   ],
   "asks": [
     [
       "0.000000452",
       "12125633.00000000"
-    ],
-    ...
+    ]
   ]
 }
 ```
