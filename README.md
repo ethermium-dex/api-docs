@@ -5,7 +5,7 @@
 
 
 # LIMITS
-* Current API request limit is set at 1000 requests per minute. If you wish to send more operations, use the batch send endpoints to send multiple operations in a single request
+* Current API request limit is set at 1000 requests per minute. If you wish to send more operations, use the `batchOperations` endpoint to send multiple `orderCreate` and `orderCancel` operations in a single request
 
 ## Terminology
 * `base token` refers to the asset that is the `price` of a symbol.
