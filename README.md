@@ -121,7 +121,7 @@ limit | INT | NO | Default 100; max 10000
   "quoteSymbol": "HOT",
   "quoteDecimals": 18,
   "baseAddress": "0x0000000000000000000000000000000000000000",
-  "baseSymbol"" "ETH",
+  "baseSymbol": "ETH",
   "baseDecimals": 18,
   "bids": [
     [
