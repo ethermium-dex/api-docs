@@ -1,4 +1,4 @@
-# Public Rest API for EtherMium (2018-11-13)
+# Public Rest API for EtherMium (2019-03-04)
 # General API Information
 * The base endpoint is: **https://api.ethermium.com/**
 * All endpoints return a JSON object
