@@ -346,6 +346,102 @@ is_pending | Boolean | NO | If `true` will return  pending trades (trades that h
 
 
 
+# Websocket API
+In order to connect to the websocket API we recomend using the `socket-io` library. The endpoint for websocket connections is `https://b.ethermium.com`
+
+```javascript
+const io = require('socket.io-client');
+var socket = io('https://b.ethermium.com', {
+	extraHeaders: {
+		Origin: 'https://ethermium.com'
+	},
+	rejectUnauthorized: false,
+	'reconnection': true,
+  	'reconnectionDelay': 500,
+  	'reconnectionAttempts': 100
+});
+
+socket.on( 'connect', function () {
+    console.log( '[EtherMiumIo.connect] connected to server' );
+});
+ 
+socket.on( 'disconnect', function () {
+    console.error( '[EtherMiumIo.connect] disconnected from server' );
+} );
+
+socket.on( 'error', function () {
+    console.error( '[EtherMiumIo.connect] error ' );
+});
+````
+
+### Subscribing to tokens
+To subscribe to all trade and order events, use the following code:
+
+```javascript
+const ioreq = require('socket.io-request');
+
+ioreq(socket).request('/contracts/subscribe', 'all');
+ioreq(socket).request('/tokens/subscribe', 'all');
+```
+
+#### Subscribe to Trade event
+Subscribe to this event to receive new trades
+```javascript
+// Listen trades events
+socket.on('trades', event => {
+    processTradeMessage(event);
+});
+```
+**Response:**
+Check My Token Trades endpoint
+
+
+#### Subscribe to Depth event
+Subscribe to this events to receive orderbook updates
+```javascript
+// Listen orders events
+socket.on('depth', event => {
+    processDepthMessage(event);
+});		
+```
+
+**Payload:**
+```javascript
+{
+  "u": 1027024, // last orderbook update id
+  "quoteAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+  "quoteSymbol": "HOT",
+  "quoteDecimals": 18,
+  "baseAddress": "0x0000000000000000000000000000000000000000",
+  "baseSymbol": "ETH",
+  "baseDecimals": 18,
+  "bids": [
+    [
+        "0.000000450",     // PRICE
+        "431000.00000000"   // QTY
+    ],
+    [
+        "0.000000451",
+        "0"
+    ]
+  ],
+  "asks": [
+    [
+        "0.000000452",
+        "12125633.00000000"
+    ]
+  ]
+}
+```
+### How to manage a local order book correctly
+* Open a websocket connection and subscribe to the depth event
+* Get a orderbook snapshot using `/v1/tokenOrderBook` endpoint
+* Delete all ordersd where u < lastUpdateId 
+* The data in each event is the total quantity per price level
+* If the quantity is 0, remove the price level
+
+
+
 
 
 
