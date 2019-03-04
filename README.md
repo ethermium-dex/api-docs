@@ -387,6 +387,66 @@ Use this endpoint to send multiple operations in a single request. We recommend 
 ]
 ```
 
+### Get Gas Price
+```
+GET /v1/gasPrice
+```
+
+**Response:**
+```javascript
+{
+    "standard": 4, // <5 mins to confirm
+    "safe_low": 2, // <30 mins to confirm (nullable)
+    "fast":	8, // <1 min to confirm (nullable)
+    "fastest": 12, // Confirms in 1-2 blocks (nullable)
+    data_source: 'EthGasStation' // The data source
+}
+```
+
+### Withdraw
+```
+POST /v1/withdraw
+```
+
+**Parameters:**
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+contract_address | String | YES | The contract address
+token_address | String | YES | The token address for withdrawal (use `0x0000000000000000000000000000000000000000` for ETH)
+amount | String	| YES | The amount to withdraw (in WEI)
+user_address | String | YES | Your wallet address
+nonce | String | YES | A number of your choosing (doesn't need to be unique)
+v | String | YES | `v` value of signature
+r | String | YES | `r` value of signature
+s | String | YES | `s` value of signature
+withdraw_hash | String | YES | The withdraw hash
+gas_price | Number | NO | The gas price in GWei you are willing to pay. The higher the Gas price, the faster the withdrawal confirmation.
+
+* In order to get the withdraw_hash, use the code below:
+```javascript
+const Web3Module = require('web3');
+const web3 = new Web3Module('https://mainnet.infura.io');
+createWithdrawHash(contract_address, token_address, amount, user_address, nonce) {
+	return web3.utils.soliditySha3(
+		{type: 'address', value: contract_address},
+		{type: 'uint160', value: token_address},
+		{type: 'uint256', value: amount},
+		{type: 'address', value: user_address},
+		{type: 'uint256', value: nonce}
+	);
+}
+
+var withdraw_hash = createWithdrawHash(...);
+```
+
+**Response:**
+```javascript
+{  
+    "transaction_hash": '0xb52aa0d76dff51622293b67584d84c2cab9f900cf5bc8bdf576f190567d8ea35'
+}
+```
+
 
 # Websocket API
 In order to connect to the websocket API we recomend using the `socket-io` library. The endpoint for websocket connections is `https://b.ethermium.com`
