@@ -489,7 +489,6 @@ ioreq(socket).request('/tokens/subscribe', 'all');
 #### Subscribe to Trade event
 Subscribe to this event to receive new trades
 ```javascript
-// Listen trades events
 socket.on('trades', event => {
     processTradeMessage(event);
 });
@@ -501,7 +500,6 @@ Check `My Token Trades` endpoint
 #### Subscribe to Depth event
 Subscribe to this events to receive orderbook updates
 ```javascript
-// Listen orders events
 socket.on('depth', event => {
     processDepthMessage(event);
 });		
