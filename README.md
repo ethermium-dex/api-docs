@@ -344,6 +344,48 @@ is_pending | Boolean | NO | If `true` will return  pending trades (trades that h
 }
 ```
 
+### Batch Operations
+```
+POST /v1/batchOperations
+```
+Use this endpoint to send multiple operations in a single request. We recommend sending no more than 100 operations per request for timely execution.
+
+**Parameters:**
+```javascript
+[
+    {
+        operation: 'orderCreate',
+        data: {
+            contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4',
+            token_buy_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2', 
+            amount_buy: '1000233100000000', 
+            token_sell_address: '0x0000000000000000000000000000000000000000', 
+            amount_sell: '12230000000000000',
+            nonce: '16762773848',
+            user_address: '0xf6919Baa4D921529d45b67E044C2Fbc53Caa531b',
+            v: 27,
+            r: '0x033711cdac43d170902e2903ab62f66182dc6c6f28aed9f0fcc1993b701f1628',
+            s: '0x1a022337a2d638dc9fae11766bf04d12d57ec41a1d419f123bf1a9e494ebf4b9',
+            order_hash: '0x02a65e31b0ca064e056f18260c2839bde8d6923f9056a117b8731b8605c2383d',
+            stop_price: null
+        }
+    },
+    {
+        operation: 'orderCancel',
+        data: {
+            contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4',
+            order_hash: '0xecadf62bdbb0e70cddaef0b3a75352052e158d6e78ad71655ca511b59977140b',
+            user_address: '0xf6919Baa4D921529d45b67E044C2Fbc53Caa531b',
+            nonce: 1283474884,
+            v: 27,
+            r: '0x16271d5f0f83897c7fd61b32f8768e3f74d584da1eb9ae72414a4f26bfd2aa06',
+            s: '0x57524d0b773a2570546eca7cd59f61acbf916587f196702fd0eb52c0086c209d',
+            cancel_hash: '0xa8233ccaae89a6d85c35f88b662eb221e1ccadda1b1b0adbaf9c2a96fc6d9462'
+        }
+    },
+    ...
+]
+```
 
 
 # Websocket API
