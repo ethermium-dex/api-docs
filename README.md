@@ -538,7 +538,7 @@ socket.on('depth', event => {
 ### How to manage a local order book correctly
 * Open a websocket connection and subscribe to the depth event
 * Get a orderbook snapshot using `/v1/tokenOrderBook` endpoint
-* Delete all ordersd where u < lastUpdateId 
+* Delete all orders where u < lastUpdateId 
 * The data in each event is the total quantity per price level
 * If the quantity is 0, remove the price level
 
