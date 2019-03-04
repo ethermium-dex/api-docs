@@ -180,7 +180,7 @@ createOrderHash(contract_address, token_buy_address, amount_buy, token_sell_addr
 }
 ```
 
-* For market orders simply set a low/high price your order will be matched against the best available prices.
+* For market orders simply set a lower/higher price, your order will be matched against the best available prices.
 
 **Response:**
 ```javascript
