@@ -392,8 +392,8 @@ socket.on('trades', event => {
     processTradeMessage(event);
 });
 ```
-**Response:**
-Check My Token Trades endpoint
+**Payload:**
+Check `My Token Trades` endpoint
 
 
 #### Subscribe to Depth event
