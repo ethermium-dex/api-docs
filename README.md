@@ -71,7 +71,7 @@ sign(hash) {
 var signed = sign(...);
 console.log(signed.v, signed.r, signed.s);
 ```
-* Replace <private key> with your wallet private key
+* Replace '<private key>' with your wallet private key
 
 # Public API Endpoints
 ### Token Tickers
