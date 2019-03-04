@@ -11,6 +11,7 @@
 * `base token` refers to the asset that is the `price` of a symbol.
 * `quote token` refers to the asset that is the `quantity` of a symbol.
 * `wei` the smallest unit of measurement in Ethereum. `1 ETH` = `1 000 000 000 000 000 000 WEI` (18 zeros)
+* `contract_address` refers to the exchange contract address, currently: `0xa5CC679A3528956E8032df4F03756C077C1eE3F4`
 
 # CALCULATING BUY AND SELL AMOUNTS
 When creating an order you have to specify the amount you want to receive (amount buy) and the amount you are willing to pay (amount sell). Both amount must be specified in WEI. If you want to buy 1 token that has 18 decimals, the amount buy will be `1 000 000 000 000 000 000` (1 with 18 zeros, or 1e18). The same logic applies to amount sell.
@@ -210,10 +211,10 @@ cancel_hash | String | YES | The cancel hash
 ```javascript
 const Web3Module = require('web3');
 const web3 = new Web3Module('https://mainnet.infura.io');
-createCancelOrderHash(order_hash, user_address, nonce) {
+createCancelOrderHash(contract_address, order_hash, user_address, nonce) {
 	try {
 		return web3.utils.soliditySha3(
-			{type: 'address', value: this._address},
+			{type: 'address', value: contract_address},
 			{type: 'bytes32', value: orderHash},
 			{type: 'address', value: userAddr},
 			{type: 'uint256', value: nonce}
