@@ -108,10 +108,10 @@ GET /v1/tokenOrderBook
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-contractAddress | STRING | YES | The address of the exchange contract
-quoteAddress | STRING | YES | Quote token address
-baseAddress | STRING | YES | Base token address (use '0x0000000000000000000000000000000000000000' for ETH)
-limit | INT | NO | Default 100; max 10000
+contractAddress | String | YES | The address of the exchange contract
+quoteAddress | String | YES | Quote token address
+baseAddress | String | YES | Base token address (use '0x0000000000000000000000000000000000000000' for ETH)
+limit | Int | NO | Default 100; max 10000
 
 **Response:**
 ```javascript
@@ -148,7 +148,7 @@ POST /v1/tokenOrder
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-contract_address | STRING	| YES | The contract address
+contract_address | String	| YES | The contract address
 token_buy_address |	String | YES | The token buy address
 amount_buy | Number | YES | Amount to buy in WEI
 token_sell_address | String | YES | The token sell address
