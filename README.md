@@ -404,6 +404,35 @@ is_pending | Boolean | NO | If `true` will return  pending trades (trades that h
 ]
 ```
 
+### My Balance
+```
+GET /v1/myBalance
+```
+
+
+**Parameters:**
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+contract_address | String | NO | The contract address
+quoteAddress | String | NO |The order token address
+user_address | String | YES | The order owner address
+
+**Response:**
+```javascript
+[
+  {
+    token_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2', // the address of the token
+    decimals: 18, // number of decimals for the token
+    raw_balance: 100002220000000000000, // balance in WEI
+    decimal_adjusted_balance: 100.00222, // balanca in token
+    raw_in_orders: 0, // balance reserved in orders (in WEI)
+    decimal_adjusted_in_orders: 0, // balance reserved in orders (in tokens)
+  },
+  ...
+]
+```
+
 ### Batch Operations
 ```
 POST /v1/batchOperations

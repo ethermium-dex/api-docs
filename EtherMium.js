@@ -66,7 +66,12 @@ class EtherMiumApi {
 	async getTickers(quoteAddress = null, baseAddress = null)
 	{
 		try {
-			const resp = await axios.get(this.apiUrl+'/v1/tokenTickers');
+			var request = {
+				quoteAddress: quoteAddress,
+				baseAddress: baseAddress
+			}
+
+			const resp = await axios.get(this.apiUrl+'/v1/tokenTickers', request);
 			return resp.data.data;	
 		}
 		catch (error)
