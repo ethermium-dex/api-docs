@@ -415,13 +415,14 @@ GET /v1/myBalance
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 contract_address | String | NO | The contract address
-quoteAddress | String | NO |The order token address
+token_address | String | NO |The order token address
 user_address | String | YES | The order owner address
 
 **Response:**
 ```javascript
 [
   {
+    contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4', // The EtherMium contract address
     token_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2', // the address of the token
     decimals: 18, // number of decimals for the token
     raw_balance: 100002220000000000000, // balance in WEI
