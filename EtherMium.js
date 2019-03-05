@@ -455,7 +455,7 @@ class EtherMiumApi {
 
 	// generates the order hash
 	createOrderHash(contract_address, token_buy_address, amount_buy, token_sell_address, amount_sell, nonce, user_address) {
-		return web3.utils.soliditySha3(
+		return this.web3.utils.soliditySha3(
 			{type: 'address', value: contract_address},
 			{type: 'uint160', value: token_buy_address},
 			{type: 'uint256', value: amount_buy},
@@ -470,7 +470,7 @@ class EtherMiumApi {
 	// generates the cancel hash
 	createCancelOrderHash(contract_address, order_hash, user_address, nonce) {
 		try {
-			return web3.utils.soliditySha3(
+			return this.web3.utils.soliditySha3(
 				{type: 'address', value: contract_address},
 				{type: 'bytes32', value: orderHash},
 				{type: 'address', value: userAddr},
@@ -485,7 +485,7 @@ class EtherMiumApi {
 
 	// generates the withdraw hash
 	createWithdrawHash(contract_address, token_address, amount, user_address, nonce) {
-		return web3.utils.soliditySha3(
+		return this.web3.utils.soliditySha3(
 			{type: 'address', value: contract_address},
 			{type: 'uint160', value: token_address},
 			{type: 'uint256', value: amount},
