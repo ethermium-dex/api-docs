@@ -216,8 +216,8 @@ createCancelOrderHash(contract_address, order_hash, user_address, nonce) {
 	try {
 		return web3.utils.soliditySha3(
 			{type: 'address', value: contract_address},
-			{type: 'bytes32', value: orderHash},
-			{type: 'address', value: userAddr},
+			{type: 'bytes32', value: order_hash},
+			{type: 'address', value: user_address},
 			{type: 'uint256', value: nonce}
 		);
 	}
@@ -228,7 +228,51 @@ createCancelOrderHash(contract_address, order_hash, user_address, nonce) {
 }
 ```
 
-* For market orders simply set a low/high price your order will be matched against the best available prices.
+
+**Response:**
+```javascript
+success/failure message
+```
+
+
+### Cancel All Token Orders
+```
+POST /v1/cancelAllTokenOrder
+```
+
+**Parameters:**
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+contract_address | String | YES | The contract address
+token_address | String | YES | The token address (use '0x0000000000000000000000000000000000000000' to cancel all orders)
+user_address | String | YES | The order owner address
+nonce | Number | YES | A number for your own use (doesn’t have to be unique)
+v | Number | YES | v value of signature
+r | String | YES | r value of signature
+s | String | YES | s value of signature
+cancel_hash | String | YES | The cancel hash
+
+
+* In order to get the cancel_hash, use the code below:
+```javascript
+const Web3Module = require('web3');
+const web3 = new Web3Module('https://mainnet.infura.io');
+createCancelOrderHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
+  try {
+    return web3.utils.soliditySha3(
+      {type: 'address', value: contract_address},      
+      {type: 'address', value: user_address},
+      {type: 'uint256', value: nonce}
+      {type: 'address', value: token_address}
+    );
+  }
+  catch (error)
+  {
+    console.error(`Error signing hash: ${error.message}`);
+  }
+}
+```
 
 **Response:**
 ```javascript
