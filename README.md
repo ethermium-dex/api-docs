@@ -77,9 +77,10 @@ console.log(signed.v, signed.r, signed.s);
 # Public API Endpoints
 ### Token Tickers
 Returns the list of tokens with last prices, best bids/asks and 24 hour volumes
-...
+
+```
 GET /v1/tokenTickers
-...
+```
 
 **Response:**
 ```javascript
