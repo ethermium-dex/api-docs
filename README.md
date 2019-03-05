@@ -82,6 +82,13 @@ Returns the list of tokens with last prices, best bids/asks and 24 hour volumes
 GET /v1/tokenTickers
 ```
 
+**Parameters:**
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+quoteAddress | String | NO | Quote token address
+baseAddress | String | NO | Base token address (use '0x0000000000000000000000000000000000000000' for ETH)
+
 **Response:**
 ```javascript
 [
@@ -162,6 +169,7 @@ r |	String | YES | r value of signature (check signature section)
 s | String | YES | s value of signature (check signature section)
 order_hash | String | YES | The hash of the new order 
 stop_price | Number | NO | Stop price
+expires | Number | NO | The block number when the order will expire and will no longer be tradeable (must be greater than 5)
 
 
 * In order to get the order_hash, use the code below:
@@ -258,7 +266,7 @@ cancel_hash | String | YES | The cancel hash
 ```javascript
 const Web3Module = require('web3');
 const web3 = new Web3Module('https://mainnet.infura.io');
-createCancelOrderHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
+createCancelAllTokenOrdersHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
   try {
     return web3.utils.soliditySha3(
       {type: 'address', value: contract_address},      
@@ -296,38 +304,42 @@ user_address | String | YES | The order owner address
 
 **Response:**
 ```javascript
-{
-  id: 1233445, // The order id
-  contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4' // The contract address
-  token_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2' // The token address
-  token_buy_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2' // The token buy address
-  amount_buy: 1000233100000000, // The buy amount
-  token_sell_address: '0x0000000000000000000000000000000000000000' // The token sell address
-  amount_sell: 12230000000000000, // The sell amount
-  nonce: 16762773848, // The nonce
-  user_address	'0xf6919Baa4D921529d45b67E044C2Fbc53Caa531b' // The order owner address
-  v: 27, // v value of signature
-  r: '0x033711cdac43d170902e2903ab62f66182dc6c6f28aed9f0fcc1993b701f1628', // r value of signature
-  s: '0x1a022337a2d638dc9fae11766bf04d12d57ec41a1d419f123bf1a9e494ebf4b9', // s value of signature
-  order_hash: '0x02a65e31b0ca064e056f18260c2839bde8d6923f9056a117b8731b8605c2383d', // The order hash
-  is_buy: true, // True if buy order
-  unit_price: 0.0000856, // The unit price per token
-  stop_price: 0.0000820, // The stop price (null if wasn't set)
-  is_stopped: 1, // True if order is a stop-limit order
-  amount_filled: 0, // Amount filled
-  pending: 1000233100000000, // Unfilled amount
-  approved: 0, //  Amount filled and confirmed on the blockchain
-  not_unconfirmed_trade_ids: [], // Pending or confirmed trade ids
-  fulfilled_at: null, // Time when order was fulfilled (nullable)
-  canceled_at: null, // Time when order was canceled (nullable)
-  created_at: 2018-09-15 12:43:22, // Time when order was created
-  buy_decimals: 18, // Buy token decimals
-  buy_symbol: 'HOT', // Buy token symbol
-  buy_name:	'HoloToken', // Buy token name
-  sell_decimals: 18, // Sell token decimals	
-  sell_symbol: "ETH" // Sell token symbol 
-  sell_name: "Ethereum" // Sell token name
-}
+[
+  {
+    id: 1233445, // The order id
+    contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4' // The contract address
+    token_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2' // The token address
+    token_buy_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2' // The token buy address
+    amount_buy: 1000233100000000, // The buy amount
+    token_sell_address: '0x0000000000000000000000000000000000000000' // The token sell address
+    amount_sell: 12230000000000000, // The sell amount
+    nonce: 16762773848, // The nonce
+    user_address	'0xf6919Baa4D921529d45b67E044C2Fbc53Caa531b' // The order owner address
+    v: 27, // v value of signature
+    r: '0x033711cdac43d170902e2903ab62f66182dc6c6f28aed9f0fcc1993b701f1628', // r value of signature
+    s: '0x1a022337a2d638dc9fae11766bf04d12d57ec41a1d419f123bf1a9e494ebf4b9', // s value of signature
+    order_hash: '0x02a65e31b0ca064e056f18260c2839bde8d6923f9056a117b8731b8605c2383d', // The order hash
+    is_buy: true, // True if buy order
+    unit_price: 0.0000856, // The unit price per token
+    stop_price: 0.0000820, // The stop price (null if wasn't set)
+    is_stopped: 1, // True if order is a stop-limit order
+    amount_filled: 0, // Amount filled
+    pending: 1000233100000000, // Unfilled amount
+    approved: 0, //  Amount filled and confirmed on the blockchain
+    not_unconfirmed_trade_ids: [], // Pending or confirmed trade ids
+    fulfilled_at: null, // Time when order was fulfilled (nullable)
+    canceled_at: null, // Time when order was canceled (nullable)
+    created_at: 2018-09-15 12:43:22, // Time when order was created
+    buy_decimals: 18, // Buy token decimals
+    buy_symbol: 'HOT', // Buy token symbol
+    buy_name:	'HoloToken', // Buy token name
+    sell_decimals: 18, // Sell token decimals	
+    sell_symbol: "ETH", // Sell token symbol 
+    sell_name: "Ethereum", // Sell token name
+    expires: 633384499 // The block number when the order will expire (null if no expiration set)
+  },
+  ...
+]
 ```
 
 
@@ -349,7 +361,8 @@ is_pending | Boolean | NO | If `true` will return  pending trades (trades that h
 
 **Response:**
 ```javascript
-{
+[
+  {
     id: 122384844, // The trade id
     contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4', // The contract address
     token_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2', // The token address
@@ -386,7 +399,9 @@ is_pending | Boolean | NO | If `true` will return  pending trades (trades that h
     takerTokenSell: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2', // Taker token sell
     makerOrderHash: '0x7430ad84f34f39f1e82530b2ef5a7fab079e88a7a804fe483bc48d452c55787b', // Maker order hash
     takerOrderHash: '0xa84ce76d9e15e85ab34fa9d0284a25c2369eaaa7b3e2f99cc621d63e82244f98' // Taker order hash
-}
+  },
+  ...
+]
 ```
 
 ### Batch Operations

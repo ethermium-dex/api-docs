@@ -59,9 +59,11 @@ class EtherMiumApi {
 	/**
 	 * Get Tickers
 	 *
+	 * @param {String} quoteAddress Address of the quote token 
+	 * @param {String} baseAddress Address of the base token (if HOT/ETH, this should be '0x0000000000000000000000000000000000000000'
 	 * @return {TickerList}
 	 */
-	async getTickers()
+	async getTickers(quoteAddress = null, baseAddress = null)
 	{
 		try {
 			const resp = await axios.get(this.apiUrl+'/v1/tokenTickers');
@@ -187,9 +189,10 @@ class EtherMiumApi {
 	 * @param {Int} quoteTokenDecimals Decimals of the base token
 	 * @param {String} baseToken Address of the pair token (if you are trading HOT/ETH, quoteToken=HOT and baseToken=ETH)
 	 * @param {Int} baseTokenDecimals Decimals of the quote token
+	 * @param {Int} expires The block number when the order will expire (optional)
 	 * @return {TokenOrderResponse}
 	 */
-	async placeLimitOrder(side, price, quantity, quoteToken, quoteTokenDecimals, baseToken, baseTokenDecimals)
+	async placeLimitOrder(side, price, quantity, quoteToken, quoteTokenDecimals, baseToken, baseTokenDecimals, expires = null)
 	{
 		try {
 			[amountBuy, amountSell] = this.getAmountBuyAndSell(side, price, quantity, quoteTokenDecimals, baseTokenDecimals);
@@ -216,7 +219,9 @@ class EtherMiumApi {
 			}
 
 			var orderRequest = this.generateNewOrderRequest(data);
-
+			
+			orderRequest.expires = expires;
+			
 			const resp = await axios.post(this.apiUrl+'/v1/tokenOrder', orderRequest);
 			return resp.data.data;	
 			
@@ -239,6 +244,39 @@ class EtherMiumApi {
 		catch (error)
 		{
 			console.error(`[EtherMium.cancelTokenOrder] Error=${error.message}`);
+		}
+	}
+
+	async cancelAllTokenOrder(token_addrress = '0x0000000000000000000000000000000000000000')
+	{
+		try {
+			const nonce = this.getNonce();
+
+			const cancelHash = this.createCancelAllTokenOrdersHash(
+				this.contract_address,
+				this.walletAddress,
+				nonce,
+				token_address
+			);
+			const sign = this.sign(cancelHash);
+
+			const request = {
+				contract_address: this.contractAddress,
+				user_address: this.walletAddress,
+				nonce: nonce,
+				token_address: token_address,
+				v: sign.v,
+				r: sign.r,
+				s: sign.s,
+				cancel_hash: cancelHash
+			};
+
+			const resp = await axios.post(this.apiUrl+'/v1/cancelAllTokenOrder', request);
+			return resp.data.data;	
+		}
+		catch (error)
+		{
+			console.error(`[EtherMium.cancelAllTokenOrder] Error=${error.message}`);
 		}
 	}
 
@@ -494,6 +532,21 @@ class EtherMiumApi {
 		}
 	}
 
+	createCancelAllTokenOrdersHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
+		try {
+			return web3.utils.soliditySha3(
+			  	{type: 'address', value: contract_address},      
+			  	{type: 'address', value: user_address},
+			  	{type: 'uint256', value: nonce}
+			  	{type: 'address', value: token_address}
+			);
+		}
+		catch (error)
+		{
+			console.error(`Error signing hash: ${error.message}`);
+		}
+	}
+
 	// generates the withdraw hash
 	createWithdrawHash(contract_address, token_address, amount, user_address, nonce) {
 		return this.web3.utils.soliditySha3(
@@ -507,6 +560,31 @@ class EtherMiumApi {
 
 
 
+	async getCurrentBlockNumber()
+	{
+		try {
+			let self = this;
+
+			return new Promise(resolve => {
+				setTimeout(() => { resolve(false) }, 30e3);
+				try {
+					web3.eth.getBlockNumber().then((val) => {
+						resolve(val);
+					});	
+				}
+				catch (error)
+				{
+					cons.error(`[getCurrentBlockNumber] Error=${error.message}`);
+					resolve(false);
+				}				
+			});
+		}
+		catch (error)
+		{
+			cons.error(`[getCurrentBlockNumber] Error=${error.message}`);
+			return false;
+		}
+	}
 	
 
 
