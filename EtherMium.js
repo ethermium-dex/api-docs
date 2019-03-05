@@ -142,6 +142,36 @@ class EtherMiumApi {
 
 
 	/**
+	 * Get My Balance
+	 *
+	 * @param {String} token_address Address of the quote token 
+	 * @return {TokenOrderList}
+	 */
+	async getMyBalance(token_address = null)
+	{
+		try {
+			var request = {
+				contract_address: this.contract_address,
+				user_address: this.walletAddress				
+			}
+
+			if (token_address != null)
+			{
+				request.token_address = token_address;
+			}
+
+			const resp = await axios.get(this.apiUrl+'/v1/myBalance', request);
+			return resp.data.data;	
+		}
+		catch (error)
+		{
+			console.error(`[EtherMium.getMyBalance] Error=${error.message}`);
+			return false;
+		}
+	}
+
+
+	/**
 	 * Get My Token Trades
 	 *
 	 * @param {String} token_address Address of the quote token 
