@@ -67,8 +67,8 @@ class EtherMiumApi {
 	{
 		try {
 			var request = {
-				quoteAddress: quoteAddress,
-				baseAddress: baseAddress
+				quoteAddress: ethUtil.toChecksumAddress(quoteAddress),
+				baseAddress: ethUtil.toChecksumAddress(baseAddress)
 			}
 
 			const resp = await axios.get(this.apiUrl+'/v1/tokenTickers', request);
@@ -94,9 +94,9 @@ class EtherMiumApi {
 	{
 		try {
 			var request = {
-				contractAddress: this.contract_address,
-				quoteAddress: quoteAddress,
-				baseAddress: baseAddress,
+				contractAddress: ethUtil.toChecksumAddress(this.contract_address),
+				quoteAddress: ethUtil.toChecksumAddress(quoteAddress),
+				baseAddress: ethUtil.toChecksumAddress(baseAddress),
 				limit: limit
 			}
 
@@ -121,13 +121,13 @@ class EtherMiumApi {
 	{
 		try {
 			var request = {
-				contract_address: this.contract_address,
-				user_address: this.walletAddress				
+				contract_address: ethUtil.toChecksumAddress(this.contract_address),
+				user_address: ethUtil.toChecksumAddress(this.walletAddress)				
 			}
 
 			if (token_address != null)
 			{
-				request.quoteAddress = token_address;
+				request.quoteAddress = ethUtil.toChecksumAddress(token_address);
 			}
 
 			const resp = await axios.get(this.apiUrl+'/v1/myTokenOrders', request);
@@ -151,13 +151,13 @@ class EtherMiumApi {
 	{
 		try {
 			var request = {
-				contract_address: this.contract_address,
-				user_address: this.walletAddress				
+				contract_address: ethUtil.toChecksumAddress(this.contract_address),
+				user_address: ethUtil.toChecksumAddress(this.walletAddress)				
 			}
 
 			if (token_address != null)
 			{
-				request.token_address = token_address;
+				request.token_address = ethUtil.toChecksumAddress(token_address);
 			}
 
 			const resp = await axios.get(this.apiUrl+'/v1/myBalance', request);
@@ -183,13 +183,13 @@ class EtherMiumApi {
 	{
 		try {
 			var request = {
-				contract_address: this.contract_address,
-				user_address: this.walletAddress				
+				contract_address: ethUtil.toChecksumAddress(this.contract_address),
+				user_address: ethUtil.toChecksumAddress(this.walletAddress)				
 			}
 
 			if (token_address != null)
 			{
-				request.token_address = token_address;
+				request.token_address = ethUtil.toChecksumAddress(token_address);
 			}
 
 			if (is_confirmed != null)
@@ -236,18 +236,18 @@ class EtherMiumApi {
 			{
 				case 'BUY':
 					var data = {
-						tokenGet: quoteToken,
+						tokenGet: ethUtil.toChecksumAddress(quoteToken),
 						amountGet: amountBuy,
-						tokenGive: baseToken,
+						tokenGive: ethUtil.toChecksumAddress(baseToken),
 						amountGive: amountSell
 					}
 				break;
 
 				case 'SELL':
 					var data = {
-						tokenGet: baseToken,
+						tokenGet: ethUtil.toChecksumAddress(baseToken),
 						amountGet: amountBuy,
-						tokenGive: quoteToken,
+						tokenGive: ethUtil.toChecksumAddress(quoteToken),
 						amountGive: amountSell
 					}
 				break;
@@ -288,18 +288,18 @@ class EtherMiumApi {
 			const nonce = this.getNonce();
 
 			const cancelHash = this.createCancelAllTokenOrdersHash(
-				this.contract_address,
-				this.walletAddress,
+				ethUtil.toChecksumAddress(this.contract_address),
+				ethUtil.toChecksumAddress(this.walletAddress),
 				nonce,
 				token_address
 			);
 			const sign = this.sign(cancelHash);
 
 			const request = {
-				contract_address: this.contractAddress,
-				user_address: this.walletAddress,
+				contract_address: ethUtil.toChecksumAddress(this.contractAddress),
+				user_address: ethUtil.toChecksumAddress(this.walletAddress),
 				nonce: nonce,
-				token_address: token_address,
+				token_address: ethUtil.toChecksumAddress(token_address),
 				v: sign.v,
 				r: sign.r,
 				s: sign.s,
@@ -365,20 +365,20 @@ class EtherMiumApi {
 			const nonce = this.getNonce();
 
 			const withdrawHash = this.createWithdrawHash(
-				this.contract_addrress,
-				token_address,
+				ethUtil.toChecksumAddress(this.contract_addrress),
+				ethUtil.toChecksumAddress(token_address),
 				amount,
-				this.walletAddress,
+				ethUtil.toChecksumAddress(this.walletAddress),
 				nonce
 			);
 
 			const sign = this.sign(withdrawHash);
 
 			const req = {
-				contract_address: this.contract_address,
-				token_address: token_address,
+				contract_address: ethUtil.toChecksumAddress(this.contract_address),
+				token_address: ethUtil.toChecksumAddress(token_address),
 				amount: amount,
-				user_address: this.walletAddress,
+				user_address: ethUtil.toChecksumAddress(this.walletAddress),
 				nonce: nonce,
 				v: sign.v,
 				r: sign.r,
@@ -402,17 +402,17 @@ class EtherMiumApi {
 			const nonce = this.getNonce();
 
 			const cancelHash = this.createCancelOrderHash(
-				this.contract_address,
+				ethUtil.toChecksumAddress(this.contract_address),
 				orderHash,
-				this.walletAddress,
+				ethUtil.toChecksumAddress(this.walletAddress),
 				nonce
 			);
 			const sign = this.sign(cancelHash);
 
 			const req = {
-				contract_address: order.contractAddress,
-				order_hash: order.orderHash,
-				user_address: order.userAddress,
+				contract_address: ethUtil.toChecksumAddress(this.contract_address),
+				order_hash: orderHash,
+				user_address: ethUtil.toChecksumAddress(this.walletAddress),
 				nonce: nonce,
 				v: sign.v,
 				r: sign.r,
@@ -446,14 +446,14 @@ class EtherMiumApi {
 	{
 		try {
 			const nonce = this.getNonce(),
-				contractAddr = this.contract_address;
+				contractAddr = ethUtil.toChecksumAddress(this.contract_address);
 
-			const user_address = this.walletAddress;
+			const user_address = ethUtil.toChecksumAddress(this.walletAddress);
 
 			const orderHash = this.createOrderHash(
-				data.tokenGet,
+				ethUtil.toChecksumAddress(data.tokenGet),
 				data.amountGet,
-				data.tokenGive,
+				ethUtil.toChecksumAddress(data.tokenGive),
 				data.amountGive,
 				nonce,
 				user_address
@@ -463,9 +463,9 @@ class EtherMiumApi {
 
 			var req = {
 				contract_address: contractAddr,
-				token_buy_address: data.tokenGet,
+				token_buy_address: ethUtil.toChecksumAddress(data.tokenGet),
 				amount_buy: data.amountGet,
-				token_sell_address: data.tokenGive,
+				token_sell_address: ethUtil.toChecksumAddress(data.tokenGive),
 				amount_sell: data.amountGive,
 				nonce: nonce,
 				user_address: user_address,
@@ -540,13 +540,13 @@ class EtherMiumApi {
 	// generates the order hash
 	createOrderHash(contract_address, token_buy_address, amount_buy, token_sell_address, amount_sell, nonce, user_address) {
 		return this.web3.utils.soliditySha3(
-			{type: 'address', value: contract_address},
-			{type: 'uint160', value: token_buy_address},
+			{type: 'address', value: ethUtil.toChecksumAddress(contract_address)},
+			{type: 'uint160', value: ethUtil.toChecksumAddress(token_buy_address)},
 			{type: 'uint256', value: amount_buy},
-			{type: 'uint160', value: token_sell_address},
+			{type: 'uint160', value: ethUtil.toChecksumAddress(token_sell_address)},
 			{type: 'uint256', value: amount_sell},
 			{type: 'uint256', value: nonce},
-			{type: 'address', value: user_address}
+			{type: 'address', value: ethUtil.toChecksumAddress(user_address)}
 		);
 	}
 
@@ -555,9 +555,9 @@ class EtherMiumApi {
 	createCancelOrderHash(contract_address, order_hash, user_address, nonce) {
 		try {
 			return this.web3.utils.soliditySha3(
-				{type: 'address', value: contract_address},
-				{type: 'bytes32', value: orderHash},
-				{type: 'address', value: userAddr},
+				{type: 'address', value: ethUtil.toChecksumAddress(contract_address)},
+				{type: 'bytes32', value: order_hash},
+				{type: 'address', value: ethUtil.toChecksumAddress(user_address)},
 				{type: 'uint256', value: nonce}
 			);
 		}
@@ -569,11 +569,11 @@ class EtherMiumApi {
 
 	createCancelAllTokenOrdersHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
 		try {
-			return web3.utils.soliditySha3(
-			  	{type: 'address', value: contract_address},      
-			  	{type: 'address', value: user_address},
+			return this.web3.utils.soliditySha3(
+			  	{type: 'address', value: ethUtil.toChecksumAddress(contract_address)},      
+			  	{type: 'address', value: ethUtil.toChecksumAddress(user_address)},
 			  	{type: 'uint256', value: nonce}
-			  	{type: 'address', value: token_address}
+			  	{type: 'address', value: ethUtil.toChecksumAddress(token_address)}
 			);
 		}
 		catch (error)
@@ -585,10 +585,10 @@ class EtherMiumApi {
 	// generates the withdraw hash
 	createWithdrawHash(contract_address, token_address, amount, user_address, nonce) {
 		return this.web3.utils.soliditySha3(
-			{type: 'address', value: contract_address},
-			{type: 'uint160', value: token_address},
+			{type: 'address', value: ethUtil.toChecksumAddress(contract_address)},
+			{type: 'uint160', value: ethUtil.toChecksumAddress(token_address)},
 			{type: 'uint256', value: amount},
-			{type: 'address', value: user_address},
+			{type: 'address', value: ethUtil.toChecksumAddress(user_address)},
 			{type: 'uint256', value: nonce}
 		);
 	}

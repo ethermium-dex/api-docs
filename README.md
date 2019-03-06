@@ -12,7 +12,7 @@
 * `quote token` refers to the asset that is the `quantity` of a symbol.
 * `wei` is the smallest unit of measurement in Ethereum. `1 ETH` = `1 000 000 000 000 000 000 WEI` (18 zeros)
 * `contract_address` refers to the exchange contract address, currently: `0xa5CC679A3528956E8032df4F03756C077C1eE3F4`
-* all Ethereum addresses sent to the API must be `checksummed`
+* all Ethereum addresses sent to the API must be `checksummed`, use ethUtil.check
 
 # CALCULATING BUY AND SELL AMOUNTS
 When creating an order you have to specify the amount you want to receive (amount buy) and the amount you are willing to pay (amount sell). Both amount must be specified in WEI. If you want to buy 1 token that has 18 decimals, the amount buy will be `1 000 000 000 000 000 000` (1 with 18 zeros, or 1e18). The same logic applies to amount sell.
@@ -175,18 +175,19 @@ expires | Number | NO | The block number when the order will expire and will no 
 
 * In order to get the order_hash, use the code below:
 ```javascript
-const Web3Module = require('web3');
-const web3 = new Web3Module('https://mainnet.infura.io');
+const web3 = require('web3');
+const ethUtil = require('ethereumjs-util');
+
 createOrderHash(contract_address, token_buy_address, amount_buy, token_sell_address, amount_sell, nonce, user_address) {
-	return web3.utils.soliditySha3(
-		{type: 'address', value: contract_address},
-		{type: 'uint160', value: token_buy_address},
-		{type: 'uint256', value: amount_buy},
-		{type: 'uint160', value: token_sell_address},
-		{type: 'uint256', value: amount_sell},
-		{type: 'uint256', value: nonce},
-		{type: 'address', value: user_address}
-	);
+  return web3.utils.soliditySha3(
+    {type: 'address', value: ethUtil.toChecksumAddress(contract_address)},
+    {type: 'uint160', value: ethUtil.toChecksumAddress(token_buy_address)},
+    {type: 'uint256', value: amount_buy},
+    {type: 'uint160', value: ethUtil.toChecksumAddress(token_sell_address)},
+    {type: 'uint256', value: amount_sell},
+    {type: 'uint256', value: nonce},
+    {type: 'address', value: ethUtil.toChecksumAddress(user_address)}
+  );
 }
 ```
 
@@ -219,21 +220,22 @@ cancel_hash | String | YES | The cancel hash
 
 * In order to get the cancel_hash, use the code below:
 ```javascript
-const Web3Module = require('web3');
-const web3 = new Web3Module('https://mainnet.infura.io');
+const web3 = require('web3');
+const ethUtil = require('ethereumjs-util');
+
 createCancelOrderHash(contract_address, order_hash, user_address, nonce) {
-	try {
-		return web3.utils.soliditySha3(
-			{type: 'address', value: contract_address},
-			{type: 'bytes32', value: order_hash},
-			{type: 'address', value: user_address},
-			{type: 'uint256', value: nonce}
-		);
-	}
-	catch (error)
-	{
-		console.error(`Error signing hash: ${error.message}`);
-	}
+  try {
+    return web3.utils.soliditySha3(
+      {type: 'address', value: ethUtil.toChecksumAddress(contract_address)},
+      {type: 'bytes32', value: order_hash},
+      {type: 'address', value: ethUtil.toChecksumAddress(user_address)},
+      {type: 'uint256', value: nonce}
+    );
+  }
+  catch (error)
+  {
+    console.error(`Error signing hash: ${error.message}`);
+  }
 }
 ```
 
@@ -265,15 +267,16 @@ cancel_hash | String | YES | The cancel hash
 
 * In order to get the cancel_hash, use the code below:
 ```javascript
-const Web3Module = require('web3');
-const web3 = new Web3Module('https://mainnet.infura.io');
+const web3 = require('web3');
+const ethUtil = require('ethereumjs-util');
+
 createCancelAllTokenOrdersHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
   try {
     return web3.utils.soliditySha3(
-      {type: 'address', value: contract_address},      
-      {type: 'address', value: user_address},
-      {type: 'uint256', value: nonce}
-      {type: 'address', value: token_address}
+        {type: 'address', value: ethUtil.toChecksumAddress(contract_address)},      
+        {type: 'address', value: ethUtil.toChecksumAddress(user_address)},
+        {type: 'uint256', value: nonce}
+        {type: 'address', value: ethUtil.toChecksumAddress(token_address)}
     );
   }
   catch (error)
@@ -516,16 +519,17 @@ gas_price | Number | NO | The gas price in GWei you are willing to pay. The high
 
 * In order to get the withdraw_hash, use the code below:
 ```javascript
-const Web3Module = require('web3');
-const web3 = new Web3Module('https://mainnet.infura.io');
+const web3 = require('web3');
+const ethUtil = require('ethereumjs-util');
+
 createWithdrawHash(contract_address, token_address, amount, user_address, nonce) {
-	return web3.utils.soliditySha3(
-		{type: 'address', value: contract_address},
-		{type: 'uint160', value: token_address},
-		{type: 'uint256', value: amount},
-		{type: 'address', value: user_address},
-		{type: 'uint256', value: nonce}
-	);
+  return web3.utils.soliditySha3(
+    {type: 'address', value: ethUtil.toChecksumAddress(contract_address)},
+    {type: 'uint160', value: ethUtil.toChecksumAddress(token_address)},
+    {type: 'uint256', value: amount},
+    {type: 'address', value: ethUtil.toChecksumAddress(user_address)},
+    {type: 'uint256', value: nonce}
+  );
 }
 
 var withdraw_hash = createWithdrawHash(...);
