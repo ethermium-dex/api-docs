@@ -12,6 +12,7 @@
 * `quote token` refers to the asset that is the `quantity` of a symbol.
 * `wei` is the smallest unit of measurement in Ethereum. `1 ETH` = `1 000 000 000 000 000 000 WEI` (18 zeros)
 * `contract_address` refers to the exchange contract address, currently: `0xa5CC679A3528956E8032df4F03756C077C1eE3F4`
+* all Ethereum addresses sent to the API must be `checksummed`
 
 # CALCULATING BUY AND SELL AMOUNTS
 When creating an order you have to specify the amount you want to receive (amount buy) and the amount you are willing to pay (amount sell). Both amount must be specified in WEI. If you want to buy 1 token that has 18 decimals, the amount buy will be `1 000 000 000 000 000 000` (1 with 18 zeros, or 1e18). The same logic applies to amount sell.
@@ -159,16 +160,16 @@ Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 contract_address | String	| YES | The contract address
 token_buy_address |	String | YES | The token buy address
-amount_buy | Number | YES | Amount to buy in WEI
+amount_buy | String | YES | Amount to buy in WEI
 token_sell_address | String | YES | The token sell address
-amount_sell	| Number | YES | Amount to sell in WEI
-nonce | Number | YES | A number for your own use (doesn’t have to be unique)
+amount_sell	| String | YES | Amount to sell in WEI
+nonce | String | YES | A number for your own use (doesn’t have to be unique)
 user_address | String | YES | The address of the order owner
 v |	Number | YES | v value of the signature (check signature section)
 r |	String | YES | r value of signature (check signature section)
 s | String | YES | s value of signature (check signature section)
 order_hash | String | YES | The hash of the new order 
-stop_price | Number | NO | Stop price
+stop_price | String | NO | Stop price
 expires | Number | NO | The block number when the order will expire and will no longer be tradeable (must be greater than 5)
 
 
