@@ -118,10 +118,9 @@ GET /v1/tokenOrderBook
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-contractAddress | String | YES | The address of the exchange contract
+contract_address | String | YES | The address of the exchange contract
 quoteAddress | String | YES | Quote token address
 baseAddress | String | YES | Base token address (use '0x0000000000000000000000000000000000000000' for ETH)
-limit | Int | NO | Default 100; max 10000
 
 **Response:**
 ```javascript
@@ -428,6 +427,7 @@ user_address | String | YES | The order owner address
   {
     contract_address: '0xa5CC679A3528956E8032df4F03756C077C1eE3F4', // The EtherMium contract address
     token_address: '0x6c6EE5e31d828De241282B9606C8e98Ea48526E2', // the address of the token
+    symbol: "HOT", // Token symbol
     decimals: 18, // number of decimals for the token
     raw_balance: 100002220000000000000, // balance in WEI
     decimal_adjusted_balance: 100.00222, // balanca in token
@@ -584,7 +584,7 @@ ioreq(socket).request('/tokens/subscribe', 'all');
 #### Subscribe to Trade event
 Subscribe to this event to receive new trades
 ```javascript
-socket.on('trades', event => {
+socket.on('v1/trades', event => {
     processTradeMessage(event);
 });
 ```
@@ -595,7 +595,7 @@ Check `My Token Trades` endpoint
 #### Subscribe to Depth event
 Subscribe to this events to receive orderbook updates
 ```javascript
-socket.on('depth', event => {
+socket.on('v1/depth', event => {
     processDepthMessage(event);
 });		
 ```
