@@ -8,40 +8,12 @@
 * Current API request limit is set at 1000 requests per minute. If you wish to send more operations, use the `batchOperations` endpoint to send multiple `orderCreate` and `orderCancel` operations in a single request
 
 ## Terminology
-* `base token` refers to the asset that is the `price` of a symbol.
-* `quote token` refers to the asset that is the `quantity` of a symbol.
+* `base token` refers to the asset that is the `quantity` of a symbol.
+* `quote token` refers to the asset that is the `price` of a symbol.
 * `wei` is the smallest unit of measurement in Ethereum. `1 ETH` = `1 000 000 000 000 000 000 WEI` (18 zeros)
 * `contract_address` refers to the exchange contract address, currently: `0xa5CC679A3528956E8032df4F03756C077C1eE3F4`
 * all Ethereum addresses sent to the API must be `checksummed`, use `ethUtil.toChecksumAddress(address)` to convert address
 
-# CALCULATING BUY AND SELL AMOUNTS
-When creating an order you have to specify the amount you want to receive (amount buy) and the amount you are willing to pay (amount sell). Both amount must be specified in WEI. If you want to buy 1 token that has 18 decimals, the amount buy will be `1 000 000 000 000 000 000` (1 with 18 zeros, or 1e18). The same logic applies to amount sell.
-
-Use the below function to get teh amountBuy and amountSell for a given quantity and price:
-
-```javascript
-const BigNumber = require('bignumber.js');
-getAmountBuyAndSell(side, price, quantity, quoteTokenDecimals, baseTokenDecimals)
-{
-	switch (side)
-	{
-		case 'BUY':
-			return [
-				new BigNumber(quantity).times(new BigNumber(10).pow(quoteTokenDecimals)).toFixed(0,1),
-				new BigNumber(quantity).times(new BigNumber(price)).times(new BigNumber(10).pow(baseTokenDecimals)).toFixed(0,0),
-			]
-		break;
-		case 'SELL':
-			return [
-				new BigNumber(quantity).div(new BigNumber(price)).times(new BigNumber(10).pow(baseTokenDecimals)).toFixed(0,0),
-				new BigNumber(quantity).times(new BigNumber(10).pow(quoteTokenDecimals)).toFixed(0,1)
-			]
-		break;
-	}
-}
-
-[amount_buy, amount_sell] = getAmountBuyAndSell(...);
-```
 
 # SIGNING A HASH
 Some API endpoints require the signing of a hash in order to prove the ownership of the account. For different operations the structure of the hash differs, please refer to the respective endpoints. After you have produced the hash, use the following function to sign:
@@ -73,7 +45,10 @@ sign(hash) {
 var signed = sign(...);
 console.log(signed.v, signed.r, signed.s);
 ```
-* Replace 'private key' with your wallet private key
+* Replace `private key` with your wallet private key
+
+# API WRAPPER
+We recommend using our API wrapper for esasy implementations. Find our NodeJS Api Wrapper [here](https://github.com/ethermium-dex/nodejs-api-wrapper)
 
 # Public API Endpoints
 ### Token Tickers
@@ -87,21 +62,21 @@ GET /v1/tokenTickers
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-quoteAddress | String | NO | Quote token address
-baseAddress | String | NO | Base token address (use '0x0000000000000000000000000000000000000000' for ETH)
+quoteAddress | String | NO | Quote token address (use '0x0000000000000000000000000000000000000000' for ETH)
+baseAddress | String | NO | Base token address 
 
 **Response:**
 ```javascript
 [
   {
-    "quoteAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
-    "quoteSymbol": "HOT",
-    "quoteSymbolDecimals": 18,
-    "quoteVolume": "7462.998433",
-    "baseAddress": "0x0000000000000000000000000000000000000000",
-    "baseSymbol": "ETH",
+    "baseAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+    "baseSymbol": "HOT",
     "baseSymbolDecimals": 18,
-    "baseVolume": "7.3922603247161",
+    "baseVolume": "7462.998433",
+    "quoteAddress": "0x0000000000000000000000000000000000000000",
+    "quoteSymbol": "ETH",
+    "quoteSymbolDecimals": 18,
+    "quoteVolume": "7.3922603247161",
     "last": "0.000008010",
     "lowestAsk": "0.000008012",
     "highestBid": "0.000008008"
@@ -119,19 +94,19 @@ GET /v1/tokenOrderBook
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 contract_address | String | YES | The address of the exchange contract
-quoteAddress | String | YES | Quote token address
-baseAddress | String | YES | Base token address (use '0x0000000000000000000000000000000000000000' for ETH)
+quoteAddress | String | YES | Quote token address (use '0x0000000000000000000000000000000000000000' for ETH)
+baseAddress | String | YES | Base token address 
 
 **Response:**
 ```javascript
 {
   "lastUpdateId": 1027024,
-  "quoteAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
-  "quoteSymbol": "HOT",
-  "quoteDecimals": 18,
-  "baseAddress": "0x0000000000000000000000000000000000000000",
-  "baseSymbol": "ETH",
+  "baseAddress": "0x6c6EE5e31d828De241282B9606C8e98Ea48526E2",
+  "baseSymbol": "HOT",
   "baseDecimals": 18,
+  "quoteAddress": "0x0000000000000000000000000000000000000000",
+  "quoteSymbol": "ETH",
+  "quoteDecimals": 18,
   "bids": [
     [
       "0.000000450",     // PRICE
@@ -169,7 +144,6 @@ r |	String | YES | r value of signature (check signature section)
 s | String | YES | s value of signature (check signature section)
 order_hash | String | YES | The hash of the new order 
 stop_price | String | NO | Stop price
-expires | Number | NO | The block number when the order will expire and will no longer be tradeable (must be greater than 5)
 
 
 * In order to get the order_hash, use the code below:
@@ -269,13 +243,14 @@ cancel_hash | String | YES | The cancel hash
 const web3 = require('web3');
 const ethUtil = require('ethereumjs-util');
 
-createCancelAllTokenOrdersHash(contract_address, user_address, nonce, token_address = '0x0000000000000000000000000000000000000000') {
+createCancelAllTokenOrdersHash(contract_address, user_address, nonce, token_address) {
   try {
     return web3.utils.soliditySha3(
-        {type: 'address', value: ethUtil.toChecksumAddress(contract_address)},      
+        {type: 'address', value: ethUtil.toChecksumAddress(contract_address)},    
+        {type: 'address', value: ethUtil.toChecksumAddress(token_address)}, 
         {type: 'address', value: ethUtil.toChecksumAddress(user_address)},
         {type: 'uint256', value: nonce}
-        {type: 'address', value: ethUtil.toChecksumAddress(token_address)}
+        
     );
   }
   catch (error)
@@ -302,7 +277,7 @@ GET /v1/myTokenOrders
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 contract_address | String | NO | The contract address
-quoteAddress | String | NO |The order token address
+token_address | String | NO | The order token address
 user_address | String | YES | The order owner address
 
 **Response:**
@@ -339,7 +314,6 @@ user_address | String | YES | The order owner address
     sell_decimals: 18, // Sell token decimals	
     sell_symbol: "ETH", // Sell token symbol 
     sell_name: "Ethereum", // Sell token name
-    expires: 633384499 // The block number when the order will expire (null if no expiration set)
   },
   ...
 ]
@@ -350,6 +324,8 @@ user_address | String | YES | The order owner address
 ```
 GET /v1/myTokenTrades
 ```
+
+Returns the last 1000 trades for the user.
 
 
 **Parameters:**
@@ -406,6 +382,7 @@ is_pending | Boolean | NO | If `true` will return  pending trades (trades that h
   ...
 ]
 ```
+
 
 ### My Balance
 ```
